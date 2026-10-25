@@ -208,6 +208,19 @@ iron-sensor intentionally does not monitor network egress. Meaningful egress con
 
 Network egress monitoring and policy enforcement are features of the broader [iron.sh](https://iron.sh) platform.
 
+
+## Local qualification
+
+Before merge, merge the fresh default branch into the working branch and run affected source checks and real integration checks through the admitted Beelink launcher. Workflow/docs-only changes use YAML, content, link, diff and static checks. Comprehensive commands below are references for the relevant full qualification, selected by the changed surface.
+
+Use the Go toolchain owned by [go.mod](go.mod), with `just`, clang, LLVM and libbpf development headers available on the admitted Linux host. [justfile](justfile) owns BPF generation for each validation/build recipe. Comprehensive reference:
+
+```bash
+beelink-gate auto https://github.com/tangle-network/iron-sensor.git "$(git rev-parse HEAD)" -- sh -c 'just vet && just test && just build'
+```
+
+For affected real sensor integration, use the existing `just test-e2e` recipe through the same admitted launcher on a host with its required BPF privileges. The tag-triggered [release workflow](.github/workflows/release.yml) retains its independent GoReleaser/BPF generation and published artifact; PR/push CI is retired.
+
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE) for details.
